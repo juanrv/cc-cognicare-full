@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import authRoutes from './routes/auth.routes.js'; 
-import entrenadorRoutes from './routes/entrenador.routes.js'; 
+import morgan from 'morgan'; 
+import logger from './config/logger.js'; 
+import authRoutes from './routes/auth.routes.js';
+import entrenadorRoutes from './routes/entrenador.routes.js';
 
 const app = express();
 const port = 3001;
@@ -12,23 +14,41 @@ app.use(cors());
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Ruta de prueba 
+// Configuración de Morgan para que use Winston como logger
+// El formato 'combined' es un formato estándar de Apache
+app.use(morgan('combined', {
+  stream: {
+    write: (message) => logger.http(message.trim()), // Envía los logs HTTP a Winston con nivel 'http'
+  },
+}));
+
+// Ruta de prueba
 app.get('/test', (req, res) => {
-  console.log('--- [LOG] ¡¡¡Petición recibida en /test !!! ---');
+  logger.info('--- [LOG] ¡¡¡Petición recibida en /test !!! ---'); 
   res.status(200).send('¡El backend (reestructurado) está respondiendo!');
 });
 
-// Montamos las rutas de autenticación bajo el prefijo /api
-app.use('/api', authRoutes); 
+// Montamos las rutas
+app.use('/api', authRoutes);
 app.use('/api', entrenadorRoutes);
 
-// Middleware para manejar 404 (si ninguna ruta coincide)
+// Middleware para manejar 404
 app.use((req, res) => {
-    console.log(`--- [404] Ruta no encontrada: ${req.method} ${req.path}`);
-    res.status(404).json({ message: `Ruta no encontrada: ${req.method} ${req.path}` });
+  logger.warn(`--- [404] Ruta no encontrada: ${req.method} ${req.path}`); 
+  res.status(404).json({ message: `Ruta no encontrada: ${req.method} ${req.path}` });
+});
+
+// Middleware de manejo de errores global 
+app.use((err, req, res, next) => {
+  logger.error('--- [ERROR_HANDLER] Error no controlado ---', err); 
+  res.status(err.status || 500).json({
+    message: err.message || 'Error interno del servidor.',
+    // Considera no enviar el stack en producción por seguridad
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+  });
 });
 
 // Iniciar el servidor
 app.listen(port, () => {
-  console.log(`Backend escuchando en http://localhost:${port}`);
+  logger.info(`Backend reestructurado escuchando en http://localhost:${port}`); // 
 });

@@ -1,57 +1,52 @@
-import * as AuthService from '../services/auth.service.js'; // Importamos nuestro servicio
+import * as AuthService from '../services/auth.service.js';
+import logger from '../config/logger.js';
 
-export const loginAdmin = async (req, res) => {
-  console.log('--- [CTRL] Petición recibida en loginAdmin ---');
+// Login para Administrador
+export const loginAdmin = async (req, res, next) => { 
+  logger.info('--- [CTRL] Petición recibida en loginAdmin ---', { body: req.body }); 
   const { numeroDocumento } = req.body;
-  console.log('--- [CTRL] Body:', req.body);
 
-  // La validación básica de entrada puede permanecer en el controlador
   if (!numeroDocumento) {
-    console.log('--- [CTRL] Error 400: Número de documento no proporcionado.');
+    logger.warn('--- [CTRL] Error 400: Número de documento no proporcionado.');
     return res.status(400).json({ message: 'Número de documento requerido.' });
   }
 
   try {
-    // Llamamos al servicio para realizar la autenticación
     const authResult = await AuthService.autenticarAdmin(numeroDocumento);
-
     if (authResult.success) {
-      console.log('--- [CTRL] Login Admin exitoso (vía servicio).');
-      res.json(authResult); // Enviamos el resultado completo del servicio
+      logger.info('--- [CTRL] Login Admin exitoso (vía servicio).', { adminId: authResult.user.id });
+      res.json(authResult);
     } else {
-      console.log('--- [CTRL] Login Admin fallido (vía servicio).');
-      // El servicio ya nos da un mensaje, así que lo usamos
+      logger.warn('--- [CTRL] Login Admin fallido (vía servicio).', { reason: authResult.message });
       res.status(401).json({ success: false, message: authResult.message });
     }
   } catch (error) {
-    // Este catch ahora también podría capturar errores lanzados desde el servicio
-    console.error('--- [ERROR_CTRL] Error en loginAdmin:', error.message);
-    res.status(500).json({ message: error.message || 'Error interno del servidor.' });
+    logger.error('--- [ERROR_CTRL] Error en loginAdmin:', error);
+    next(error); // Pasa el error al manejador de errores global
   }
 };
 
-export const loginEntrenador = async (req, res) => {
-  console.log('--- [CTRL] Petición recibida en loginTrainer ---');
+// Login para Entrenador
+export const loginEntrenador = async (req, res, next) => {
+  logger.info('--- [CTRL] Petición recibida en loginTrainer ---', { body: req.body });
   const { correo, numeroDocumento } = req.body;
-  console.log('--- [CTRL] Body:', req.body);
 
   if (!correo || !numeroDocumento) {
-    console.log('--- [CTRL] Error 400: Correo o número de documento no proporcionado.');
+    logger.warn('--- [CTRL] Error 400 Entrenador: Faltan datos.');
     return res.status(400).json({ message: 'Correo y número de documento requeridos.' });
   }
 
   try {
     const authResult = await AuthService.autenticarEntrenador(correo, numeroDocumento);
-
     if (authResult.success) {
-      console.log('--- [CTRL] Login Entrenador exitoso (vía servicio).');
+      logger.info('--- [CTRL] Login Entrenador exitoso (vía servicio).', { trainerId: authResult.user.id });
       res.json(authResult);
     } else {
-      console.log('--- [CTRL] Login Entrenador fallido (vía servicio).');
+      logger.warn('--- [CTRL] Login Entrenador fallido (vía servicio).', { reason: authResult.message });
       res.status(401).json({ success: false, message: authResult.message });
     }
   } catch (error) {
-    console.error('--- [ERROR_CTRL] Error en loginTrainer:', error.message);
-    res.status(500).json({ message: error.message || 'Error interno del servidor.' });
+    logger.error('--- [ERROR_CTRL] Error en loginTrainer:', error);
+    next(error); // Pasa el error al manejador de errores global
   }
 };

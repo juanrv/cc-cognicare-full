@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/secrets.js';
+import logger from '../config/logger.js';
 
 /*
  * Genera un token JWT.
@@ -12,7 +13,7 @@ export const generartoken = (userId, userRole) => {
     id: userId,
     role: userRole,
   };
-  console.log('--- [JWT_UTIL] Generando token con payload:', payload);
+  logger.info('--- [JWT_UTIL] Generando token con payload:', payload);
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 };
 

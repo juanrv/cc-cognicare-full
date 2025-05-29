@@ -1,4 +1,5 @@
 import pg from 'pg';
+import logger from './logger.js';
 
 const { Pool } = pg;
 
@@ -15,9 +16,9 @@ const pool = new Pool({
 // Intento de conexión al pool
 pool.connect((err, client, release) => {
   if (err) {
-    return console.error('Error adquiriendo cliente de la base de datos', err.stack);
+    return logger.error('Error adquiriendo cliente de la base de datos', err.stack);
   }
-  console.log('--- [DB] Conexión a la base de datos establecida correctamente ---');
+  logger.info('--- [DB] Conexión a la base de datos establecida correctamente ---');
   client.release(); // Se libera el cliente para que pueda ser reutilizado
 });
 
