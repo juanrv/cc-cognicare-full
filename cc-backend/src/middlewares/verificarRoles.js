@@ -2,8 +2,6 @@ import logger from "../config/logger.js";
 
 // Middleware para verificar si es Admin
 export const isAdmin = (req, res, next) => {
-    // Importante: Asumimos que 'verifyToken' ya se ejecutó
-    // y que 'req.user' existe.
     if (req.user && req.user.role === 'admin') {
         next(); // Es admin, continuar
     } else {
@@ -14,8 +12,6 @@ export const isAdmin = (req, res, next) => {
 
 // Middleware para verificar si es Entrenador
 export const isEntrenador = (req, res, next) => {
-    // Importante: Asumimos que 'verifyToken' ya se ejecutó
-    // y que 'req.user' existe.
     if (req.user && req.user.role === 'entrenador') {
         next(); // Es entrenador, continuar
     } else {
