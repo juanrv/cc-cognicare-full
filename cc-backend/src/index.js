@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.routes.js'; 
-import trainerRoutes from './routes/trainer.routes.js'; 
+import entrenadorRoutes from './routes/entrenador.routes.js'; 
 
 const app = express();
 const port = 3001;
@@ -20,7 +20,7 @@ app.get('/test', (req, res) => {
 
 // Montamos las rutas de autenticación bajo el prefijo /api
 app.use('/api', authRoutes); 
-app.use('/api', trainerRoutes);
+app.use('/api', entrenadorRoutes);
 
 // Middleware para manejar 404 (si ninguna ruta coincide)
 app.use((req, res) => {

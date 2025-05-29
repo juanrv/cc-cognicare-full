@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { verifyToken } from '../middlewares/verifyToken.js';
-import { isAdmin } from '../middlewares/verifyRoles.js';
+import { verificarToken } from '../middlewares/verificarToken.js';
+import { isAdmin } from '../middlewares/verificarRoles.js';
 // Importaríamos los controladores de entrenadores cuando existan
 // import { createTrainer, getTrainers } from '../controllers/trainer.controller.js';
 
@@ -13,13 +13,13 @@ const router = Router();
 // router.post('/entrenadores', verifyToken, isAdmin, createTrainer);
 
 // Por ahora, una ruta de prueba protegida:
-router.get('/entrenadores/profile', verifyToken, (req, res) => {
+router.get('/entrenadores/profile', verificarToken, (req, res) => {
     // Gracias a verifyToken, aquí tenemos req.user
     res.json({ message: `Bienvenido a tu perfil (protegido), ID: ${req.user.id}, Rol: ${req.user.role}` });
 });
 
 // Y una ruta de prueba solo para admins:
-router.get('/entrenadores/admin-only', verifyToken, isAdmin, (req, res) => {
+router.get('/entrenadores/admin-only', verificarToken, isAdmin, (req, res) => {
     res.json({ message: `¡Hola Admin! ID: ${req.user.id}. Estás viendo contenido solo para admins.` });
 });
 

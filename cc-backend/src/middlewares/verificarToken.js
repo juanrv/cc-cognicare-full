@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/secrets.js';
 
-export const verifyToken = (req, res, next) => {
+export const verificarToken = (req, res, next) => {
   // 1. Obtener el token de la cabecera 'Authorization'
   const authHeader = req.headers['authorization'];
   // Esperamos 'Bearer TOKEN_AQUI'
