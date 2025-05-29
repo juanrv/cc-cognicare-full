@@ -30,7 +30,7 @@ function InicioPage() { // Renombramos a InicioPage
 
   // Esta función se la podríamos pasar a LoginForm para que nos avise
   const handleSuccessfulLogin = (loginData) => {
-      console.log("¡Login exitoso desde InicioPage!", loginData);
+      console.log("Login exitoso", loginData);
       // Aquí, en el futuro, cambiaríamos la vista a un Dashboard, por ejemplo.
   };
 

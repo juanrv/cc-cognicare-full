@@ -32,7 +32,7 @@ function LoginForm({ onLoginSuccess }) {
 
       if (response.ok && data.success) {
         setMessage(`¡Bienvenido ${data.user.nombres}! Rol: ${data.role}`);
-        // Si se pasó la función onLoginSuccess, la llamamos
+        // Llamar a la función onLoginSuccess
         if (onLoginSuccess) {
             onLoginSuccess(data);
         }

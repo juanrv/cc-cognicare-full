@@ -5,7 +5,7 @@ node_modules/
 dist/
 
 # Archivos de configuración 
-config/
+# config/
 
 # Archivos de logs
 *.log
